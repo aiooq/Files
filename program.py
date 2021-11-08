@@ -8,13 +8,13 @@ try:
     
     try:
         from tasks.task1 import Main as task1
-        tasks.append(task1()())
+        # tasks.append(task1()())
     except ImportError:
         pass
 
     try:
         from tasks.task2 import Main as task2
-        #tasks.append(task2()())
+        tasks.append(task2()())
     except ImportError:
         pass
 

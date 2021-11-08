@@ -4,10 +4,12 @@ class Main:
     def __call__(self):
 
         config = (
-            ({"in":"Введите данные: ", "def":self.FuncMain}))
+            ({"in":"Введите данные: ", "def":self.func_main}))
         return config
 
-    def FuncMain(self, value, out):
+    def func_main(self, value, out):
+        if value=="":
+            return
         try:
             file=open("files/task1.txt", "a")
             try:
