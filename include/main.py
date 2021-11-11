@@ -1,4 +1,4 @@
-class Main:
+class Manager:
     def __call__(self, tasks):
         self.IsStopped = False
         # Основной цикл
@@ -17,49 +17,51 @@ class Main:
 
     @staticmethod
     def GetValueByType(value, type_values):
-        for item in type_values:
-            try:
-                if item == str:
-                    if len(type_values)==1:
-                        try:
-                            float(value)
-                            continue
-                        except ValueError:
-                            if value.isnumeric():
-                                continue
-                    else:
-                        return item(value)
-            except:
-                continue
+        count_types=len(type_values)
+        if count_types==0 or len(value)==0:
+            return None
 
-        for item in type_values:
+        # извлекаем из массива приоритетный тип, если указано несколько 
+        #   {str,float,...} -> None (любое значение текст или число)
+        ##   {float,int} -> float (любое число) исправить!!!!
+        #   {int} -> only int (только целое)
+        #   {str} -> only str (только текст)
+        #   {float} -> only float (только вещественное)
+        type_main = None
+        type_combo = False
+        if count_types==1:
+            for item in type_values:
+                type_main=item
+        elif str not in type_values and float in type_values and int in type_values:
+            type_main = float
+            type_combo = True
+
+        # проверяем
+        if type_main==None:
+            type_main=str
+        elif type_main==str:
             try:
-                if item == float:
-                    if len(type_values)==1:
-                        if len(value)>0:
-                            if value[0]=='-':
-                                    if value[1:len(value)].isnumeric():
-                                        continue
-                            else:
-                                if value.isnumeric():
-                                    continue
-                elif item == int:
-                    if len(type_values)==1:
-                        try:
-                            if len(value)>0:
-                                if value[0]=='-':
-                                    if not value[1:len(value)].isnumeric():
-                                        continue
-                                elif not value.isnumeric():
-                                    continue
-                        except ValueError:
-                                continue
-                    else:
-                        continue
-                return item(value)
-            except:
-                continue
-        return None
+                float(value)
+                return None
+            except ValueError:
+                if value.isnumeric():
+                    return None
+        elif type_main == float:
+            if not type_combo:
+                if value[0]=='-':
+                    if value[1:len(value)].isnumeric():
+                        return None
+                else:
+                    if value.isnumeric():
+                        return None
+        elif type_main == int:
+            if value[0]=='-':
+                if not value[1:len(value)].isnumeric():
+                    return None
+            else:
+                if not value.isnumeric():
+                    return None
+        return type_main(value)
 
     def main(self, tuple):
         i=0
@@ -83,7 +85,7 @@ class Main:
                         if type(type_values)==type:
                             type_values={type_values}
                         
-                        value=Main.GetValueByType(value, type_values)
+                        value=Manager.GetValueByType(value, type_values)
                         if value==None:
                             raise Exception()
                         
